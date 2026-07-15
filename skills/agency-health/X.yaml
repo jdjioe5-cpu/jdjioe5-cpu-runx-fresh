@@ -1,0 +1,196 @@
+skill: agency-health
+version: "0.1.1"
+
+catalog:
+  kind: graph
+  audience: operator
+  visibility: public
+  role: context
+
+harness:
+  cases:
+    - name: concerning-agency-sealed
+      runner: fold
+      inputs:
+        projection_packet:
+          operation: read_projection
+          status: read
+          aggregate_id: case-health-harness-concerning
+          after_version: 8
+          projection:
+            aggregate_id: case-health-harness-concerning
+            version: 8
+            event_count: 8
+        event_packet:
+          operation: read_events
+          status: read
+          aggregate_id: case-health-harness-concerning
+          after_version: 8
+          rows:
+            - {version: 1, committed_at: "2026-07-01T08:00:00Z", event: {payload: {type: opened, status: advanced, charter: {limits: {max_acts: 20, max_spend: 1000}, cumulative: {acts: 17, spend: 720}}}}}
+            - {version: 2, committed_at: "2026-07-01T09:00:00Z", event: {payload: {status: advanced}}}
+            - {version: 3, committed_at: "2026-07-01T10:00:00Z", event: {payload: {status: awaiting_approval}}}
+            - {version: 4, committed_at: "2026-07-02T09:00:00Z", event: {payload: {status: advanced}}}
+            - {version: 5, committed_at: "2026-07-02T10:00:00Z", event: {payload: {status: awaiting_approval}}}
+            - {version: 6, committed_at: "2026-07-03T09:00:00Z", event: {payload: {status: sealed}}}
+            - {version: 7, committed_at: "2026-07-04T09:00:00Z", event: {payload: {status: resolved}}}
+            - {version: 8, committed_at: "2026-07-05T09:00:00Z", event: {payload: {status: advanced}}}
+        ledger_packet:
+          matched_receipts:
+            - {receipt_id: "rcpt_agency_health_001", status: sealed}
+            - {receipt_id: "rcpt_agency_health_002", status: refused}
+        period:
+          since: "2026-07-01T00:00:00Z"
+          until: "2026-07-10T23:59:59Z"
+        health_baseline:
+          threshold_days_stuck: 2
+          cap_pressure_pct: 80
+          refusal_spike_rate: 0.10
+      expect:
+        status: sealed
+        receipt:
+          schema: runx.receipt.v1
+    - name: no-case-events-stop
+      runner: fold
+      inputs:
+        projection_packet:
+          operation: read_projection
+          status: read
+          aggregate_id: case-health-harness-empty
+          after_version: 0
+          projection:
+            aggregate_id: case-health-harness-empty
+            version: 0
+            event_count: 0
+        event_packet:
+          operation: read_events
+          status: read
+          aggregate_id: case-health-harness-empty
+          after_version: 0
+          rows: []
+        ledger_packet:
+          matched_receipts: []
+        period:
+          since: "2026-07-01T00:00:00Z"
+          until: "2026-07-10T23:59:59Z"
+      expect:
+        status: sealed
+        receipt:
+          schema: runx.receipt.v1
+    - name: source-handoff-needs-agent
+      runner: source-handoff
+      inputs: {}
+      expect:
+        status: needs_agent
+
+runners:
+  source-handoff:
+    type: agent-task
+    agent: operator
+    task: agency-health-source-handoff
+    outputs:
+      source_resolution: object
+    inputs:
+      data_source_ref:
+        type: string
+        required: true
+        description: Operator-provided hosted data-source binding needed before a live read.
+
+  evaluate:
+    default: true
+    type: graph
+    inputs:
+      data_source_ref:
+        type: string
+        required: true
+        description: Registry-pinned hosted data-source reference for the live agency case.
+      store_id:
+        type: string
+        required: false
+        description: Optional store binding resolved by the data-source registry.
+      agency_ref:
+        type: string
+        required: true
+        description: Agency whose case health is being evaluated.
+      case_id:
+        type: string
+        required: true
+        description: Live agency case aggregate id.
+      period:
+        type: json
+        required: false
+        description: ISO since/until bounds applied while folding the case stream.
+      health_baseline:
+        type: json
+        required: false
+        description: Declared stuck-day, cap-pressure, and refusal-spike thresholds.
+      ledger_filter:
+        type: json
+        required: false
+        description: Ledger read filter; the health packet receives receipt id-stubs only.
+    graph:
+      name: agency-health-live-composition
+      steps:
+        - id: case_projection
+          skill: registry:runx/data-store@sha-58e31b665e57
+          runner: read_projection
+          inputs:
+            data_source_ref: "$input.data_source_ref"
+            store_id: "$input.store_id"
+            resource: agency_cases
+            aggregate_id: "$input.case_id"
+        - id: ledger_read
+          skill: registry:runx/ledger@sha-b8559fc898e7
+          runner: read
+          inputs:
+            question: "Which governed agency receipts ground health signals for this live case period?"
+            filter: "$input.ledger_filter"
+        - id: case_events
+          skill: registry:runx/data-store@sha-58e31b665e57
+          runner: read_events
+          inputs:
+            data_source_ref: "$input.data_source_ref"
+            store_id: "$input.store_id"
+            resource: agency_cases
+            aggregate_id: "$input.case_id"
+        - id: evaluate
+          skill: ./
+          runner: fold
+          inputs:
+            period: "$input.period"
+            health_baseline: "$input.health_baseline"
+          context:
+            projection_packet: case_projection.data_operation_result.data
+            event_packet: case_events.data_operation_result.data
+            ledger_packet: ledger_read.ledger_answer_packet.data
+
+  fold:
+    type: cli-tool
+    command: node
+    args:
+      - run.mjs
+    outputs:
+      decision: string
+      health_verdict: object
+      intervention_findings: array
+      refusals: array
+      receipt_local: object
+    artifacts:
+      wrap_as: agency_health_packet
+      packet: runx.agency.health.v1
+    inputs:
+      projection_packet:
+        type: json
+        required: true
+      event_packet:
+        type: json
+        required: true
+      ledger_packet:
+        type: json
+        required: true
+      period:
+        type: json
+        required: false
+      health_baseline:
+        type: json
+        required: false

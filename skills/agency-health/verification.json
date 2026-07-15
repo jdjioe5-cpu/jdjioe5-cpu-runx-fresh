@@ -1,0 +1,23 @@
+{
+  "schema": "runx.agency.health.public-verification.v2",
+  "bounty_number": 106,
+  "source_commit": "d5d88ce1397bbc2e75b0d9c9bc8a4b72ab342357",
+  "source_urls": {
+    "run_mjs": "https://raw.githubusercontent.com/jdjioe5-cpu/jdjioe5-cpu-runx-fresh/d5d88ce1397bbc2e75b0d9c9bc8a4b72ab342357/skills/agency-health/run.mjs",
+    "x_yaml": "https://raw.githubusercontent.com/jdjioe5-cpu/jdjioe5-cpu-runx-fresh/d5d88ce1397bbc2e75b0d9c9bc8a4b72ab342357/skills/agency-health/X.yaml",
+    "skill_md": "https://raw.githubusercontent.com/jdjioe5-cpu/jdjioe5-cpu-runx-fresh/d5d88ce1397bbc2e75b0d9c9bc8a4b72ab342357/skills/agency-health/SKILL.md"
+  },
+  "package": "jdjioe5-cpu/agency-health@sha-a329ceb74be3",
+  "checks": [
+    {"name": "runx_version", "status": "passed", "actual": "runx-cli 0.6.14"},
+    {"name": "local_harness", "status": "passed", "case_count": 3, "assertion_error_count": 0},
+    {"name": "hosted_registry_harness", "status": "passed"},
+    {"name": "clean_install", "status": "passed"},
+    {"name": "registry_provenance", "status": "passed", "trust_state": "trusted", "profile_digest": "sha256:468cc18a002ea81acd1ec6fced9d6aef94d7c0adc569f152b19775c0b8b1b0a0"},
+    {"name": "live_case_projection", "status": "passed", "case_id": "case-health-postpublish-20260715T081222Z", "projection_version": 8, "folded_turns": 8},
+    {"name": "ledger_id_stubs", "status": "passed", "count": 7},
+    {"name": "live_health_verdict", "status": "passed", "decision": "needs_human", "health_status": "critical", "findings_count": 5, "intervention_findings_count": 4},
+    {"name": "post_publish_receipt_verify", "status": "passed", "receipt_ref": "runx:receipt:sha256:c8bb8bda2f1badd7f51d329bf61d5ed8261c01227e88c1fd2f4c10217c96e53b", "valid": true, "signature_mode": "production", "signature_status": "valid"}
+  ],
+  "result": "passed"
+}
