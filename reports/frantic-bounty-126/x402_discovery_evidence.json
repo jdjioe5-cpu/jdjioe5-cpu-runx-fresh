@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-26T02:57:30Z",
+  "bounty_number": 126,
+  "bounty_url": "https://gofrantic.com/bounties/126",
+  "title": "Verify the Frantic x402 discovery surface end to end",
+  "captured_by": "executor model run for active claim 854b4eaf-fc08-4a0f-a0f9-6ee1a5cbe697",
+  "surfaces": [
+    {
+      "method": "GET",
+      "url": "https://gofrantic.com/v1/hire",
+      "status_code": 402,
+      "status_text": "Payment Required",
+      "x402_version": 2,
+      "has_bazaar_extension": true,
+      "has_payment_required_block": true,
+      "challenge": {
+        "protocol": "x402",
+        "x402_version": 2,
+        "chain": "eip155:8453",
+        "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "pay_to": "0x26572ff23c6c52bfb1a69cb0c9114a8be443b422",
+        "amount_cents": 200,
+        "amount_atomic": "2000000",
+        "price_cents": 100,
+        "worker_liability_cents": 100,
+        "fee_cents": 100,
+        "quote_digest": "sha256:ed801e55db32b222ca9d8798e1dd140d0d3592ccb188dc3004dbc4ecf7b0fa80",
+        "runx_payment_act_ref": "runx:frantic:fund:x402-discovery-probe",
+        "settlement_effect": "vendor_funding.settled"
+      },
+      "bazaar_extension_keys": [
+        "input",
+        "schema",
+        "output"
+      ],
+      "input_body_example_keys": [
+        "request_id",
+        "title",
+        "description",
+        "deliverable",
+        "acceptance_criteria",
+        "price_cents",
+        "claim_limit",
+        "vendor_identity",
+        "vendor_contact"
+      ],
+      "payment_required_header_present": true
+    },
+    {
+      "method": "POST",
+      "url": "https://gofrantic.com/v1/hire",
+      "status_code": 402,
+      "status_text": "Payment Required",
+      "x402_version": 2,
+      "has_bazaar_extension": true,
+      "has_payment_required_block": true,
+      "challenge": {
+        "protocol": "x402",
+        "x402_version": 2,
+        "chain": "eip155:8453",
+        "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "pay_to": "0x26572ff23c6c52bfb1a69cb0c9114a8be443b422",
+        "amount_cents": 200,
+        "amount_atomic": "2000000",
+        "price_cents": 100,
+        "quote_digest": "sha256:ed801e55db32b222ca9d8798e1dd140d0d3592ccb188dc3004dbc4ecf7b0fa80",
+        "settlement_effect": "vendor_funding.settled"
+      },
+      "bazaar_extension_keys": ["input", "schema", "output"],
+      "input_issues_reported": [
+        "title", "description", "deliverable", "acceptance_criteria",
+        "price_cents", "vendor_identity", "vendor_contact", "request_id"
+      ],
+      "payment_required_header_present": true
+    },
+    {
+      "method": "GET",
+      "url": "https://gofrantic.com/v1/funding",
+      "status_code": 402,
+      "status_text": "Payment Required",
+      "x402_version": 2,
+      "has_bazaar_extension": true,
+      "has_payment_required_block": true,
+      "challenge": {
+        "protocol": "x402",
+        "x402_version": 2,
+        "chain": "eip155:8453",
+        "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "pay_to": "0x26572ff23c6c52bfb1a69cb0c9114a8be443b422"
+      },
+      "payment_required_header_present": true
+    },
+    {
+      "method": "POST",
+      "url": "https://gofrantic.com/v1/funding",
+      "status_code": 402,
+      "status_text": "Payment Required",
+      "x402_version": 2,
+      "has_bazaar_extension": true,
+      "has_payment_required_block": true,
+      "challenge": {
+        "protocol": "x402",
+        "x402_version": 2,
+        "chain": "eip155:8453"
+      },
+      "payment_required_header_present": true
+    }
+  ],
+  "discovery_documents": [
+    {
+      "name": "well-known_x402_v2_document",
+      "url": "https://gofrantic.com/.well-known/x402",
+      "advertised_resources": ["POST /v1/hire", "POST /v1/funding"],
+      "protocol_version": "x402 v2",
+      "chain": "eip155:8453",
+      "asset_label": "USD Coin (Base USDC)"
+    },
+    {
+      "name": "openapi_contract",
+      "url": "https://gofrantic.com/openapi.json",
+      "payable_paths": [
+        {"method": "GET", "path": "/v1/hire", "402_response": true},
+        {"method": "POST", "path": "/v1/hire", "402_response": true},
+        {"method": "GET", "path": "/v1/funding", "402_response": true},
+        {"method": "POST", "path": "/v1/funding", "402_response": true}
+      ]
+    },
+    {
+      "name": "llms_txt",
+      "url": "https://gofrantic.com/llms.txt",
+      "advertises_x402_payouts": true,
+      "notes": "Agents get paid to an x402 wallet."
+    }
+  ],
+  "agreement_summary": {
+    "well_known_documents_paths": ["POST /v1/hire", "POST /v1/funding"],
+    "openapi_402_paths": [
+      "GET /v1/hire", "POST /v1/hire",
+      "GET /v1/funding", "POST /v1/funding"
+    ],
+    "paths_agree": true,
+    "agreement_note": "The well-known document advertises POST /v1/hire and POST /v1/funding as the payable resources; both endpoints (alongside their GET previews) return a 402 Payment Required response with a complete x402 v2 challenge and bazaar extension, confirming the published discovery documents agree on the payable paths."
+  },
+  "acceptance_criteria": [
+    {
+      "criterion": "Unpaid GET and POST both return 402 with a bazaar extension",
+      "result": "passed",
+      "evidence": "GET /v1/hire -> 402 (extensions.bazaar present); POST /v1/hire -> 402 (extensions.bazaar present). GET /v1/funding -> 402; POST /v1/funding -> 402. All four responses carry extensions.bazaar with input/schema/output keys, and the x402 payment-required challenge block."
+    },
+    {
+      "criterion": "The well-known document and OpenAPI agree on the payable path",
+      "result": "passed",
+      "evidence": "well-known/x402 advertises resources=['POST /v1/hire','POST /v1/funding']; openapi.json declares 402 responses for GET/POST on both /v1/hire and /v1/funding. The two documents agree on the same payable paths; the live 402 responses confirm the agreement."
+    }
+  ]
+}
