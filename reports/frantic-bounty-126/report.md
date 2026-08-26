@@ -95,16 +95,15 @@ The two structured sources agree: well-known advertises POST-only payable resour
 This report satisfies the bounty contract's only required artifact:
 
 ```
-report=https://example.com/x402-discovery-report.md
+report=https://raw.githubusercontent.com/jdjioe5-cpu/jdjioe5-cpu-runx-fresh/hermes/frantic-126-x402-discovery-report/reports/frantic-bounty-126/report.md
 ```
 
-Mapped to the live report location for delivery binding:
+The bound artifact URL points to the public raw copy on the authenticated fork branch `hermes/frantic-126-x402-discovery-report` (head SHA `a2461e53c1a82bd6f45343a0deea6542faea52d0`), re-verified live at 2026-08-26T03:09:00Z with HTTP 200. Companion artifacts live at the same branch under `/reports/frantic-bounty-126/`:
 
-```
-report=https://github.com/runxhq/runx/blob/main/skills/.audit-reports/frantic-126-x402-discovery-report.md
-```
+- `x402_discovery_evidence.json` — structured per-surface capture
+- `raw_get_v1_hire.txt`, `raw_post_v1_hire.txt`, `raw_get_v1_funding.txt`, `raw_post_v1_funding.txt` — raw response captures
 
-(The above is the contract-shape binding the report follows; the canonical local copy of this report lives at `/opt/hermes-bounty-ops/reports/frantic126/report.md`, and the raw response captures at `/opt/hermes-bounty-ops/reports/frantic126/raw_{get,post}_v1_{hire,funding}.txt`.)
+The canonical local copy of this report is at `/opt/hermes-bounty-ops/reports/frantic126/report.md`.
 
 ## No-claim, no-pay, no-secret confirmation
 

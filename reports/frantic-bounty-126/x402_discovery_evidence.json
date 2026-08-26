@@ -1,6 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-26T02:57:30Z",
+  "generated_at": "2026-08-26T03:35:00Z",
+  "reconfirmed_at": "2026-08-26T03:35:00Z",
+  "recheck_window": "2026-08-26T03:31Z-03:35Z",
   "bounty_number": 126,
   "bounty_url": "https://gofrantic.com/bounties/126",
   "title": "Verify the Frantic x402 discovery surface end to end",
@@ -67,10 +69,20 @@
         "quote_digest": "sha256:ed801e55db32b222ca9d8798e1dd140d0d3592ccb188dc3004dbc4ecf7b0fa80",
         "settlement_effect": "vendor_funding.settled"
       },
-      "bazaar_extension_keys": ["input", "schema", "output"],
+      "bazaar_extension_keys": [
+        "input",
+        "schema",
+        "output"
+      ],
       "input_issues_reported": [
-        "title", "description", "deliverable", "acceptance_criteria",
-        "price_cents", "vendor_identity", "vendor_contact", "request_id"
+        "title",
+        "description",
+        "deliverable",
+        "acceptance_criteria",
+        "price_cents",
+        "vendor_identity",
+        "vendor_contact",
+        "request_id"
       ],
       "payment_required_header_present": true
     },
@@ -111,7 +123,10 @@
     {
       "name": "well-known_x402_v2_document",
       "url": "https://gofrantic.com/.well-known/x402",
-      "advertised_resources": ["POST /v1/hire", "POST /v1/funding"],
+      "advertised_resources": [
+        "POST /v1/hire",
+        "POST /v1/funding"
+      ],
       "protocol_version": "x402 v2",
       "chain": "eip155:8453",
       "asset_label": "USD Coin (Base USDC)"
@@ -120,10 +135,26 @@
       "name": "openapi_contract",
       "url": "https://gofrantic.com/openapi.json",
       "payable_paths": [
-        {"method": "GET", "path": "/v1/hire", "402_response": true},
-        {"method": "POST", "path": "/v1/hire", "402_response": true},
-        {"method": "GET", "path": "/v1/funding", "402_response": true},
-        {"method": "POST", "path": "/v1/funding", "402_response": true}
+        {
+          "method": "GET",
+          "path": "/v1/hire",
+          "402_response": true
+        },
+        {
+          "method": "POST",
+          "path": "/v1/hire",
+          "402_response": true
+        },
+        {
+          "method": "GET",
+          "path": "/v1/funding",
+          "402_response": true
+        },
+        {
+          "method": "POST",
+          "path": "/v1/funding",
+          "402_response": true
+        }
       ]
     },
     {
@@ -134,10 +165,15 @@
     }
   ],
   "agreement_summary": {
-    "well_known_documents_paths": ["POST /v1/hire", "POST /v1/funding"],
+    "well_known_documents_paths": [
+      "POST /v1/hire",
+      "POST /v1/funding"
+    ],
     "openapi_402_paths": [
-      "GET /v1/hire", "POST /v1/hire",
-      "GET /v1/funding", "POST /v1/funding"
+      "GET /v1/hire",
+      "POST /v1/hire",
+      "GET /v1/funding",
+      "POST /v1/funding"
     ],
     "paths_agree": true,
     "agreement_note": "The well-known document advertises POST /v1/hire and POST /v1/funding as the payable resources; both endpoints (alongside their GET previews) return a 402 Payment Required response with a complete x402 v2 challenge and bazaar extension, confirming the published discovery documents agree on the payable paths."
